@@ -5,5 +5,12 @@ YALL - Yet Another Lightweight Lisp
   A tiny lisp implemented in Go.
 
 <<< Build >>>
-Requires Godag for build
-http://code.google.com/p/godag/
+
+  Requires Godag for build
+  http://code.google.com/p/godag/
+
+<<< ToDo >>>
+
+  - Better error handling
+  - Better REPL
+  - Splicing quote
