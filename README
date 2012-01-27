@@ -1,0 +1,9 @@
+YALL - Yet Another Lightweight Lisp
+
+<<< What is this? >>>
+
+  A tiny lisp implemented in Go.
+
+<<< Build >>>
+Requires Godag for build
+http://code.google.com/p/godag/
