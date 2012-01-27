@@ -7,30 +7,30 @@ import (
 
 type Env struct {
     values map[string]Expr
-	parent *Env
+    parent *Env
 }
 
 func NewEnv() *Env {
     env := new(Env)
     env.values = make(map[string]Expr)
-	env.parent = nil
+    env.parent = nil
     env.internFunction("+", Plus)
     env.internFunction("*", Multiply)
     env.internSpecialForm("define", Define)
     env.internSpecialForm("lambda", Lambda)
     env.internVariable("#t", True)
     env.internVariable("#f", False)
-	env.internFunction("car", Car)
-	env.internFunction("cdr", Cdr)
-	env.internFunction("cons", Cons)
+    env.internFunction("car", Car)
+    env.internFunction("cdr", Cdr)
+    env.internFunction("cons", Cons)
     return env
 }
 
 func (env *Env) Derive() *Env {
-	derived := new(Env)
-	derived.values = make(map[string]Expr)
-	derived.parent = env
-	return derived
+    derived := new(Env)
+    derived.values = make(map[string]Expr)
+    derived.parent = env
+    return derived
 }
 
 func (env *Env) internSpecialForm(s string, f func(*Env, *Cell) Expr) {
@@ -42,9 +42,9 @@ func (env *Env) internFunction(s string, f func(*Cell) Expr) {
 }
 
 func (env *Env) internVariable(s string, value Expr) {
-	if nil != env.values[s] {
-		fmt.Println("*** Warning: Overwriting " + s)
-	}
+    if nil != env.values[s] {
+        fmt.Println("*** Warning: Overwriting " + s)
+    }
     env.values[s] = value
 }
 
@@ -60,11 +60,11 @@ func (env *Env) EvalSymbol(symbol *Symbol) Expr {
     if value, found := env.values[symbol.Name()]; found {
         return value
     }
-	if nil != env.parent {
-		if value := env.parent.EvalSymbol(symbol); value != nil {
-			return value
-		}
-	}
+    if nil != env.parent {
+        if value := env.parent.EvalSymbol(symbol); value != nil {
+            return value
+        }
+    }
     fmt.Printf("*** ERROR: Unbound variable: %v\n", symbol)
     return nil
 }

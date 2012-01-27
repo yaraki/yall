@@ -17,13 +17,13 @@ func Lambda(env *Env, args *Cell) Expr {
     formalArgs := args.Car().(*Cell)
     body := args.Cdr().(*Cell)
     return NewFunction("#lambda", func(args *Cell) Expr {
-		derived := env.Derive()
-		formalArgs.Each(func (e Expr) {
-			symbol := e.(*Symbol)
-			expr := args.Car()
-			derived.Intern(symbol, expr)
-			args = args.Tail()
-		})
+        derived := env.Derive()
+        formalArgs.Each(func(e Expr) {
+            symbol := e.(*Symbol)
+            expr := args.Car()
+            derived.Intern(symbol, expr)
+            args = args.Tail()
+        })
         return derived.Begin(body)
     })
 }

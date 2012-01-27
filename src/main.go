@@ -20,9 +20,9 @@ func repl() {
         if nil != err {
             break
         }
-		if result := env.EvalString(string(line)); result != nil {
-			fmt.Println(result.String())
-		}
+        if result := env.EvalString(string(line)); result != nil {
+            fmt.Println(result.String())
+        }
     }
     fmt.Println()
 }

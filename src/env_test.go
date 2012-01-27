@@ -15,7 +15,7 @@ var evalTestCases = []evalTestCase{
     evalTestCase{"123", "123"},
     evalTestCase{"(+ 1 2)", "3"},
     evalTestCase{"(+ 1 (* 2 3))", "7"},
-    evalTestCase{ "(cons 1 2)", "(1 . 2)" },
+    evalTestCase{"(cons 1 2)", "(1 . 2)"},
 }
 
 func TestEval(t *testing.T) {
@@ -38,15 +38,12 @@ func TestEval2(t *testing.T) {
     }
 }
 
-
 func TestEval3(t *testing.T) {
     env := NewEnv()
     env.internVariable("b", NewInteger(3))
     expr := env.EvalString("`(a ,b c)")
-	answer := "(a 3 c)"
+    answer := "(a 3 c)"
     if expr.String() != answer {
         t.Errorf("Received [[%v]] when expecting [[%v]]", expr.String(), answer)
     }
 }
-
-

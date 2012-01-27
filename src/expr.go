@@ -17,7 +17,7 @@ type Cell struct {
 var Empty *Cell = &Cell{nil, nil}
 
 func NewCell(car Expr, cdr Expr) *Cell {
-	return &Cell{ car, cdr }
+    return &Cell{car, cdr}
     // cell := new(Cell)
     // cell.car = car
     // cell.cdr = cdr
@@ -52,17 +52,17 @@ func (cell *Cell) Cdr() Expr {
 }
 
 func (cell *Cell) Tail() *Cell {
-	return cell.cdr.(*Cell)
+    return cell.cdr.(*Cell)
 }
 
 func (cell *Cell) Cadr() Expr {
-	return cell.cdr.(*Cell).car
+    return cell.cdr.(*Cell).car
 }
 
 func (cell *Cell) Each(f func(Expr)) {
-	for c := cell; c != Empty; c = c.Tail() {
-		f(c.Car())
-	}
+    for c := cell; c != Empty; c = c.Tail() {
+        f(c.Car())
+    }
 }
 
 type Symbol struct {
