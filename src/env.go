@@ -2,7 +2,6 @@ package yall
 
 import (
     "fmt"
-    "strings"
 )
 
 type Env struct {
@@ -124,7 +123,10 @@ func (env *Env) Eval(expr Expr) Expr {
 }
 
 func (env *Env) EvalString(s string) Expr {
-    return env.Eval(Parse(strings.NewReader(s)))
+    if expr, _, err := ReadFromString(s); err == nil {
+        return env.Eval(expr)
+    }
+    return nil
 }
 
 func (env *Env) Begin(cell *Cell) Expr {
