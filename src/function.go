@@ -19,14 +19,17 @@ func Cdr(args *Cell) Expr {
 }
 
 func Cons(arg *Cell) Expr {
-    return NewCell(arg.Car(), arg.Cadr())
+    if cadr, ok := arg.Cadr().(*Cell); ok {
+        return NewCell(arg.Car(), cadr)
+    }
+    panic("Cons requires a cell")
 }
 
 func Plus(args *Cell) Expr {
     result := 0
     for Empty != args {
         result += args.Car().(*Integer).Value()
-        args = args.Cdr().(*Cell)
+        args = args.Cdr()
     }
     return NewInteger(result)
 }
@@ -35,7 +38,7 @@ func Multiply(args *Cell) Expr {
     result := 1
     for Empty != args {
         result *= args.Car().(*Integer).Value()
-        args = args.Cdr().(*Cell)
+        args = args.Cdr()
     }
     return NewInteger(result)
 }

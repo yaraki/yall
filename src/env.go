@@ -73,20 +73,16 @@ func (env *Env) EvalEach(cell *Cell) *Cell {
         return Empty
     }
     return NewCell(env.Eval(cell.Car()),
-        env.EvalEach(cell.Cdr().(*Cell)))
+        env.EvalEach(cell.Cdr()))
     return Empty
 }
 
 func (env *Env) EvalCell(cell *Cell) Expr {
     head := env.Eval(cell.Car())
     if form, ok := head.(*SpecialForm); ok {
-        if list, lok := cell.Cdr().(*Cell); lok {
-            return form.Apply(env, list)
-        }
+        return form.Apply(env, cell.Cdr())
     } else if function, ok := head.(*Function); ok {
-        if list, lok := cell.Cdr().(*Cell); lok {
-            return function.Apply(env.EvalEach(list))
-        }
+        return function.Apply(env.EvalEach(cell.Cdr()))
     }
     fmt.Println(";; [ERROR] Failed to eval cell")
     return nil
@@ -96,8 +92,8 @@ func (env *Env) EvalQuasiquoted(expr Expr) Expr {
     if unquoted, ok := expr.(*Unquoted); ok {
         return env.Eval(unquoted.expr)
     }
-    if cell, ok := expr.(*Cell); ok && Empty != cell {
-        return NewCell(env.EvalQuasiquoted(cell.Car()), env.EvalQuasiquoted(cell.Cdr()))
+    if cell, ok := expr.(*Cell); ok && cell != Empty {
+        return NewCell(env.EvalQuasiquoted(cell.car), env.EvalQuasiquoted(cell.cdr).(*Cell))
     }
     return expr
 }
@@ -133,7 +129,7 @@ func (env *Env) Begin(cell *Cell) Expr {
     var result Expr
     for Empty != cell {
         result = env.Eval(cell.Car())
-        cell = cell.Cdr().(*Cell)
+        cell = cell.Cdr()
     }
     return result
 }

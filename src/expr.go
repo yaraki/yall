@@ -11,29 +11,23 @@ type Expr interface {
 
 type Cell struct {
     car Expr
-    cdr Expr
+    cdr *Cell
 }
 
 var Empty *Cell = &Cell{nil, nil}
 
-func NewCell(car Expr, cdr Expr) *Cell {
+func NewCell(car Expr, cdr *Cell) *Cell {
     return &Cell{car, cdr}
-    // cell := new(Cell)
-    // cell.car = car
-    // cell.cdr = cdr
-    // return cell
 }
 
 func (cell *Cell) stringWithoutParens() string {
     // The cell is printed as a list when its cdr is a cell
-    if tail, ok := cell.cdr.(*Cell); ok {
-        if Empty == cell.cdr {
-            return cell.car.String()
-        }
-        return fmt.Sprintf("%v %v", cell.car.String(), tail.stringWithoutParens())
+    if Empty == cell.cdr {
+        return cell.car.String()
     }
+    return fmt.Sprintf("%v %v", cell.car.String(), cell.cdr.stringWithoutParens())
     // The cell is a dot cell
-    return fmt.Sprintf("%v . %v", cell.car, cell.cdr)
+    // return fmt.Sprintf("%v . %v", cell.car, cell.cdr)
 }
 
 func (cell *Cell) String() string {
@@ -47,21 +41,21 @@ func (cell *Cell) Car() Expr {
     return cell.car
 }
 
-func (cell *Cell) Cdr() Expr {
+func (cell *Cell) Cdr() *Cell {
     return cell.cdr
 }
 
-func (cell *Cell) Tail() *Cell {
-    return cell.cdr.(*Cell)
-}
+// func (cell *Cell) Tail() *Cell {
+//     return cell.cdr.(*Cell)
+// }
 
 func (cell *Cell) Cadr() Expr {
-    return cell.cdr.(*Cell).car
+    return cell.cdr.car
 }
 
 func (cell *Cell) Each(f func(Expr)) {
-    for c := cell; c != Empty; c = c.Tail() {
-        f(c.Car())
+    for c := cell; c != Empty; c = c.cdr {
+        f(c.car)
     }
 }
 

@@ -15,7 +15,7 @@ var evalTestCases = []evalTestCase{
     evalTestCase{"123", "123"},
     evalTestCase{"(+ 1 2)", "3"},
     evalTestCase{"(+ 1 (* 2 3))", "7"},
-    evalTestCase{"(cons 1 2)", "(1 . 2)"},
+    evalTestCase{"(cons 1 '(2))", "(1 2)"},
 }
 
 func TestEval(t *testing.T) {

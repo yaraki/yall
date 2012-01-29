@@ -136,7 +136,7 @@ func (r *reader) readTokens(asList bool) (Expr, int, os.Error) {
     }
     if asList {
         cdr, cdrSize, cdrErr := r.readTokens(true)
-        return NewCell(expr, cdr), size + cdrSize, cdrErr
+        return NewCell(expr, cdr.(*Cell)), size + cdrSize, cdrErr
     }
     return expr, size, nil
 }
