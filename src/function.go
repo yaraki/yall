@@ -46,3 +46,4 @@ func Multiply(args *Cell) Expr {
     }
     return NewInteger(result)
 }
+

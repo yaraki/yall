@@ -32,6 +32,7 @@ func TestEval(t *testing.T) {
     }
 }
 
+// Interned symbol
 func TestEval2(t *testing.T) {
     i := -10
     env := NewEnv()
@@ -42,6 +43,7 @@ func TestEval2(t *testing.T) {
     }
 }
 
+// Quasiquote
 func TestEval3(t *testing.T) {
     env := NewEnv()
     env.internVariable("b", NewInteger(3))
@@ -51,3 +53,21 @@ func TestEval3(t *testing.T) {
         t.Errorf("Received [[%v]] when expecting [[%v]]", expr.String(), answer)
     }
 }
+
+// Closure (environment enclosing)
+func TestEval4(t *testing.T) {
+    env := NewEnv()
+    env.EvalString("(define genc (lambda () ((lambda (x) (lambda () (inc! x))) 0)))")
+    env.EvalString("(define a (genc))")
+    if "1" != env.EvalString("(a)").String() {
+        t.Errorf("Something is wrong with closure.")
+    }
+    if "2" != env.EvalString("(a)").String() {
+        t.Errorf("Something is wrong with closure.")
+    }
+    if "3" != env.EvalString("(a)").String() {
+        t.Errorf("Something is wrong with closure.")
+    }
+}
+
+

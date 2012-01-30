@@ -21,6 +21,7 @@ func NewEnv() *Env {
     env.internFunction("*", Multiply)
     env.internSpecialForm("define", Define)
     env.internSpecialForm("lambda", Lambda)
+    env.internSpecialForm("inc!", Incf)
     env.internVariable("#t", True)
     env.internVariable("#f", False)
     env.internFunction("car", Car)

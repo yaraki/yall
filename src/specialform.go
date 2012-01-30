@@ -29,3 +29,15 @@ func Lambda(env *Env, args *Cell) Expr {
         return derived.Begin(body)
     })
 }
+
+func Incf(env *Env, args *Cell) Expr {
+    symbol, ok := args.Car().(*Symbol)
+    if !ok {
+        panic(NewTypeError("inc! requires a symbol"))
+    }
+    integer, ok := env.Eval(symbol).(*Integer)
+    integer.setValue(integer.Value() + 1)
+    return integer
+}
+
+

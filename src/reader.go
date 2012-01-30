@@ -173,3 +173,12 @@ func (serr *SyntaxError) String() string {
 func isString(s string) bool {
     return strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"")
 }
+
+type TypeError struct {
+    message string
+}
+
+func NewTypeError(message string) *TypeError {
+    return &TypeError{message}
+}
+

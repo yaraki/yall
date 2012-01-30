@@ -49,10 +49,6 @@ func (cell *Cell) Cdr() *Cell {
     return cell.cdr
 }
 
-// func (cell *Cell) Tail() *Cell {
-//     return cell.cdr.(*Cell)
-// }
-
 func (cell *Cell) Cadr() Expr {
     return cell.cdr.car
 }
@@ -97,6 +93,10 @@ func (integer *Integer) String() string {
 
 func (integer *Integer) Value() int {
     return integer.value
+}
+
+func (integer *Integer) setValue(value int) {
+    integer.value = value
 }
 
 type String struct {
