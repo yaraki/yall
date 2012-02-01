@@ -1,12 +1,8 @@
-// Copyright 2011 Yuichi Araki. All rights reserved.
+// Copyright 2012 Yuichi Araki. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
 package yall
-
-import (
-    "fmt"
-)
 
 type Env struct {
     values map[string]Expr
@@ -49,7 +45,7 @@ func (env *Env) internFunction(s string, f func(*Cell) Expr) {
 
 func (env *Env) internVariable(s string, value Expr) {
     if nil != env.values[s] {
-        fmt.Println("*** Warning: Overwriting " + s)
+        panic(NewRuntimeError("Can't overwrite " + s))
     }
     env.values[s] = value
 }
@@ -71,8 +67,7 @@ func (env *Env) EvalSymbol(symbol *Symbol) Expr {
             return value
         }
     }
-    fmt.Printf("*** ERROR: Unbound variable: %v\n", symbol)
-    return nil
+    panic(NewRuntimeError("Unbound variable: " + symbol.String()))
 }
 
 func (env *Env) EvalEach(cell *Cell) *Cell {
@@ -91,8 +86,7 @@ func (env *Env) EvalCell(cell *Cell) Expr {
     } else if function, ok := head.(*Function); ok {
         return function.Apply(env.EvalEach(cell.Cdr()))
     }
-    fmt.Println(";; [ERROR] Failed to eval cell")
-    return nil
+    panic(NewRuntimeError("Failed to eval cell"))
 }
 
 func (env *Env) EvalQuasiquoted(expr Expr) Expr {
@@ -121,8 +115,7 @@ func (env *Env) Eval(expr Expr) Expr {
     if cell, ok := expr.(*Cell); ok {
         return env.EvalCell(cell)
     }
-    fmt.Println(";; [ERROR] Failed to eval")
-    return nil
+    panic(NewRuntimeError("Failed to eval"))
 }
 
 func (env *Env) EvalString(s string) Expr {

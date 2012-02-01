@@ -1,4 +1,4 @@
-// Copyright 2011 Yuichi Araki. All rights reserved.
+// Copyright 2012 Yuichi Araki. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -156,29 +156,5 @@ func Read(input io.Reader) (expr Expr, size int, err os.Error) {
 
 func ReadFromString(s string) (expr Expr, size int, err os.Error) {
     return Read(strings.NewReader(s))
-}
-
-type SyntaxError struct {
-    message string
-}
-
-func NewSyntaxError(message string) *SyntaxError {
-    return &SyntaxError{message}
-}
-
-func (serr *SyntaxError) String() string {
-    return serr.message
-}
-
-func isString(s string) bool {
-    return strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"")
-}
-
-type TypeError struct {
-    message string
-}
-
-func NewTypeError(message string) *TypeError {
-    return &TypeError{message}
 }
 

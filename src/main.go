@@ -1,4 +1,4 @@
-// Copyright 2011 Yuichi Araki. All rights reserved.
+// Copyright 2012 Yuichi Araki. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -22,11 +22,19 @@ func repl() {
         reader := bufio.NewReader(os.Stdin)
         line, _, err := reader.ReadLine()
         if nil != err {
-            break
+            return
         }
-        if result := env.EvalString(string(line)); result != nil {
-            fmt.Println(result.String())
-        }
+        func() {
+            defer func(){
+                if r := recover(); r != nil {
+                    fmt.Println(r)
+                    panic(r)
+                }
+            }()
+            if result := env.EvalString(string(line)); result != nil {
+                fmt.Println(result.String())
+            }
+        }()
     }
     fmt.Println()
 }
