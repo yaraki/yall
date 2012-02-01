@@ -34,6 +34,28 @@ func Plus(args *Cell) Expr {
     return NewInteger(result)
 }
 
+func Minus(args *Cell) Expr {
+    if Empty == args {
+        panic(NewRuntimeError("Too few arguments to minus, at least 1 required"))
+    }
+    i, iok := args.Car().(*Integer)
+    if !iok {
+        panic(NewRuntimeError("Minus requires integers"))
+    }
+    result := i.Value()
+    if Empty == args.Cdr() {
+        return NewInteger(result * -1)
+    }
+    for cell := args.Cdr(); cell != Empty; cell = cell.Cdr() {
+        i, iok := cell.Car().(*Integer)
+        if !iok {
+            panic(NewRuntimeError("Minus requires integers"))
+        }
+        result -= i.Value()
+    }
+    return NewInteger(result)
+}
+
 func Multiply(args *Cell) Expr {
     result := 1
     for Empty != args {

@@ -14,6 +14,7 @@ func NewEnv() *Env {
     env.values = make(map[string]Expr)
     env.parent = nil
     env.internFunction("+", Plus)
+    env.internFunction("-", Minus)
     env.internFunction("*", Multiply)
     env.internSpecialForm("define", Define)
     env.internSpecialForm("def", Define)
