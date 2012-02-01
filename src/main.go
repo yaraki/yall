@@ -12,7 +12,7 @@ import (
 )
 
 func prompt() {
-    fmt.Print("YALL> ")
+    fmt.Print("yall> ")
 }
 
 func repl() {
