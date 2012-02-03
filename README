@@ -15,4 +15,6 @@ YALL - Yet Another Lightweight Lisp
   - Better REPL
   - Macro
   - Type system
+  - Keyword
+  - &rest, &body, &key
 

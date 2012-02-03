@@ -26,6 +26,7 @@ func NewEnv() *Env {
     env.internFunction("car", Car)
     env.internFunction("cdr", Cdr)
     env.internFunction("cons", Cons)
+    env.internFunction("type-of", TypeOf)
     return env
 }
 
@@ -155,3 +156,33 @@ func IsLiteral(expr Expr) bool {
     }
     return false
 }
+
+func typeOf(expr Expr) *Type {
+    if _, ok := expr.(*Cell); ok {
+        return TYPE_CELL
+    }
+    if _, ok := expr.(*Symbol); ok {
+        return TYPE_SYMBOL
+    }
+    if _, ok := expr.(*Integer); ok {
+        return TYPE_INTEGER
+    }
+    if _, ok := expr.(*String); ok {
+        return TYPE_STRING
+    }
+    if _, ok := expr.(*Function); ok {
+        return TYPE_FUNCTION
+    }
+    if _, ok := expr.(*SpecialForm); ok {
+        return TYPE_SPECIAL_FORM
+    }
+    if _, ok := expr.(*Bool); ok {
+        return TYPE_BOOL
+    }
+    if _, ok := expr.(*Type); ok {
+        return TYPE_TYPE
+    }
+    return TYPE_UNKNOWN
+}
+
+

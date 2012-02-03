@@ -28,7 +28,6 @@ func repl() {
             defer func(){
                 if r := recover(); r != nil {
                     fmt.Println(r)
-                    panic(r)
                 }
             }()
             if result := env.EvalString(string(line)); result != nil {

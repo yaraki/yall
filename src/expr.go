@@ -222,3 +222,26 @@ func (b *Bool) String() string {
     }
     return "#f"
 }
+
+type Type struct {
+    name string
+}
+
+func NewType(name string) *Type {
+    return &Type{name}
+}
+
+func (t *Type) String() string {
+    return "<" + t.name + ">"
+}
+
+var TYPE_CELL *Type = NewType("cell")
+var TYPE_SYMBOL *Type = NewType("symbol")
+var TYPE_INTEGER *Type = NewType("integer")
+var TYPE_STRING *Type = NewType("string")
+var TYPE_FUNCTION *Type = NewType("function")
+var TYPE_SPECIAL_FORM *Type = NewType("special-form")
+var TYPE_BOOL *Type = NewType("bool")
+var TYPE_TYPE *Type = NewType("type")
+var TYPE_UNKNOWN *Type = NewType("unknown")
+

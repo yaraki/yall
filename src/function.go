@@ -65,3 +65,10 @@ func Multiply(args *Cell) Expr {
     return NewInteger(result)
 }
 
+func TypeOf(args *Cell) Expr {
+    if args.Cdr() != Empty {
+        panic(NewRuntimeError("Too many arguments to type-of"))
+    }
+    return typeOf(args.Car())
+}
+
