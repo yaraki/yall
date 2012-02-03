@@ -13,7 +13,6 @@ YALL - Yet Another Lightweight Lisp
 
   - Better error handling
   - Better REPL
-  - Splicing unquote
   - Macro
   - Type system
 
