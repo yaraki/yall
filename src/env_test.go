@@ -47,8 +47,9 @@ func TestEval2(t *testing.T) {
 func TestEval3(t *testing.T) {
     env := NewEnv()
     env.internVariable("b", NewInteger(3))
-    expr := env.EvalString("`(a ,b c)")
-    answer := "(a 3 c)"
+    env.internVariable("c", NewCell(NewInteger(1), NewCell(NewInteger(2), Empty)))
+    expr := env.EvalString("`(a ,b ,@c)")
+    answer := "(a 3 1 2)"
     if expr.String() != answer {
         t.Errorf("Received [[%v]] when expecting [[%v]]", expr.String(), answer)
     }

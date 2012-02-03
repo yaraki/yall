@@ -131,6 +131,11 @@ func (r *reader) readTokens(asList bool) (Expr, int, os.Error) {
         expr = NewUnquoted(rest)
         size += restSize
         err = restErr
+    } else if ",@" == token {
+        list, listSize, listErr := r.readTokens(false)
+        expr = NewSplicingUnquoted(list)
+        size += listSize
+        err = listErr
     } else if i, ierr := strconv.Atoi(token); ierr == nil {
         expr = NewInteger(i)
     } else if isString(token) {

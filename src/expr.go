@@ -155,6 +155,20 @@ func (unquoted *Unquoted) String() string {
     return "," + unquoted.expr.String()
 }
 
+type SplicingUnquoted struct {
+    expr Expr
+}
+
+func NewSplicingUnquoted(expr Expr) *SplicingUnquoted {
+    unquoted := new(SplicingUnquoted)
+    unquoted.expr = expr
+    return unquoted
+}
+
+func (unquoted *SplicingUnquoted) String() string {
+    return ",@" + unquoted.expr.String()
+}
+
 type Function struct {
     name string
     f    func(*Cell) Expr

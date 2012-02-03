@@ -95,6 +95,14 @@ func (env *Env) EvalQuasiquoted(expr Expr) Expr {
         return env.Eval(unquoted.expr)
     }
     if cell, ok := expr.(*Cell); ok && cell != Empty {
+        if splicing, sok := cell.Cadr().(*SplicingUnquoted); sok {
+            car := env.EvalQuasiquoted(cell.car)
+            cadr := env.Eval(splicing.expr)
+            if c, cok := cadr.(*Cell); cok {
+                return NewCell(car, c)
+            }
+            panic(NewRuntimeError("Invalid splicing unquote"))
+        }
         return NewCell(env.EvalQuasiquoted(cell.car), env.EvalQuasiquoted(cell.cdr).(*Cell))
     }
     return expr

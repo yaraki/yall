@@ -62,6 +62,7 @@ var readTestCases = []readTestCase{
     readTestCase{":test", ":test", 5},
     readTestCase{"`(a ,b c)", "`(a ,b c)", 9},
     readTestCase{"'a", "'a", 2},
+    readTestCase{"`(a ,b ,@(c d))", "`(a ,b ,@(c d))", 15},
 }
 
 func TestRead(t *testing.T) {
