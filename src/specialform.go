@@ -27,6 +27,14 @@ func Lambda(env *Env, args *Cell) Expr {
     })
 }
 
+func If(env *Env, args *Cell) Expr {
+    condition := env.Eval(args.Car())
+    if condition != False {
+        return env.Eval(args.Cadr())
+    }
+    return env.Eval(args.Caddr())
+}
+
 func Incf(env *Env, args *Cell) Expr {
     symbol, ok := args.Car().(*Symbol)
     if !ok {

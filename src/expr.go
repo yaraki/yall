@@ -53,6 +53,10 @@ func (cell *Cell) Cadr() Expr {
     return cell.cdr.car
 }
 
+func (cell *Cell) Caddr() Expr {
+    return cell.cdr.cdr.car
+}
+
 func (cell *Cell) Each(f func(Expr)) {
     for c := cell; c != Empty; c = c.cdr {
         f(c.car)
