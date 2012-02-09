@@ -4,7 +4,7 @@
 
 package yall
 
-func Define(env *Env, args *Cell) Expr {
+func Def(env *Env, args *Cell) Expr {
     if symbol, ok := args.Car().(*Symbol); ok {
         env.Intern(symbol, env.Eval(args.Cadr()))
         return symbol
