@@ -6,7 +6,19 @@ package yall
 
 func Def(env *Env, args *Cell) Expr {
     if symbol, ok := args.Car().(*Symbol); ok {
-        env.Intern(symbol, env.Eval(args.Cadr()))
+        value := env.Eval(args.Cadr())
+        if function, ok := value.(*Function); ok {
+            function.SetName(symbol.Name())
+        }
+        env.Intern(symbol, value)
+        return symbol
+    } else if cell, ok := args.Car().(*Cell); ok {
+        symbol := cell.Car().(*Symbol)
+        lambdaArgs := cell.Cdr()
+        lambdaBody := args.Cdr()
+        lambda := Lambda(env, NewCell(lambdaArgs, lambdaBody)).(*Function)
+        lambda.SetName(symbol.Name())
+        env.Intern(symbol, lambda)
         return symbol
     }
     panic(NewRuntimeError("Can't define"))

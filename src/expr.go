@@ -53,6 +53,10 @@ func (cell *Cell) Cadr() Expr {
     return cell.cdr.car
 }
 
+func (cell *Cell) Cddr() Expr {
+    return cell.cdr.cdr
+}
+
 func (cell *Cell) Caddr() Expr {
     return cell.cdr.cdr.car
 }
@@ -187,6 +191,10 @@ func NewFunction(name string, f func(*Cell) Expr) *Function {
 
 func (function *Function) String() string {
     return "<function " + function.name + ">"
+}
+
+func (function *Function) SetName(name string) {
+    function.name = name
 }
 
 func (function *Function) Apply(args *Cell) Expr {
