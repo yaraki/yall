@@ -58,8 +58,8 @@ func TestEval3(t *testing.T) {
 // Closure (environment enclosing)
 func TestEval4(t *testing.T) {
     env := NewEnv()
-    env.EvalString("(define genc (lambda () ((lambda (x) (lambda () (inc! x))) 0)))")
-    env.EvalString("(define a (genc))")
+    env.EvalString("(def genc (lambda () ((lambda (x) (lambda () (inc! x))) 0)))")
+    env.EvalString("(def a (genc))")
     if "1" != env.EvalString("(a)").String() {
         t.Errorf("Something is wrong with closure.")
     }
