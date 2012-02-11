@@ -4,6 +4,10 @@
 
 package yall
 
+import (
+    "os"
+)
+
 func Def(env *Env, args *Cell) Expr {
     if symbol, ok := args.Car().(*Symbol); ok {
         value := env.Eval(args.Cadr())
@@ -57,4 +61,18 @@ func Incf(env *Env, args *Cell) Expr {
     return integer
 }
 
+func Load(env *Env, args *Cell) Expr {
+    args.Each(func(expr Expr) {
+        if filename, ok := expr.(*String); ok {
+            file, err := os.Open(filename.value)
+            if nil != err {
+                panic(NewRuntimeError("Cannot load: " + filename.String()))
+            }
+            env.Load(file)
+        } else {
+            panic(NewRuntimeError("Cannot load: " + expr.String()))
+        }
+    })
+    return True
+}
 

@@ -6,7 +6,7 @@ YALL - Yet Another Lightweight Lisp
 
 <<< Build >>>
 
-  Requires Godag for build
+  Requires Godag for build (for now)
   http://code.google.com/p/godag/
 
 <<< ToDo >>>

@@ -4,6 +4,10 @@
 
 package yall
 
+import (
+    "fmt"
+)
+
 func Car(args *Cell) Expr {
     if cell, ok := args.Car().(*Cell); ok && cell != Empty {
         return cell.Car()
@@ -70,5 +74,16 @@ func TypeOf(args *Cell) Expr {
         panic(NewRuntimeError("Too many arguments to type-of"))
     }
     return typeOf(args.Car())
+}
+
+func Println(args *Cell) Expr {
+    args.Each(func(expr Expr) {
+        if str, ok := expr.(*String); ok {
+            fmt.Println(str.value)
+        } else {
+            fmt.Println(expr.String())
+        }
+    })
+    return True
 }
 

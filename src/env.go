@@ -4,6 +4,12 @@
 
 package yall
 
+import (
+    "bufio"
+    "bytes"
+    "os"
+)
+
 type Env struct {
     values map[string]Expr
     parent *Env
@@ -21,12 +27,14 @@ func NewEnv() *Env {
     env.internSpecialForm("fn", Lambda)
     env.internSpecialForm("inc!", Incf)
     env.internSpecialForm("if", If)
+    env.internSpecialForm("load", Load)
     env.internVariable("#t", True)
     env.internVariable("#f", False)
     env.internFunction("car", Car)
     env.internFunction("cdr", Cdr)
     env.internFunction("cons", Cons)
     env.internFunction("type-of", TypeOf)
+    env.internFunction("println", Println)
     return env
 }
 
@@ -133,6 +141,32 @@ func (env *Env) EvalString(s string) Expr {
         return env.Eval(expr)
     }
     return nil
+}
+
+// unused
+func slurp(file *os.File) string {
+    buffer := bytes.NewBufferString("")
+    var buf [1024]byte
+    for {
+        switch n, err := file.Read(buf[:]); true {
+        case n < 0:
+            panic(err)
+        case 0 < n:
+            buffer.Write(buf[0:n])
+        }
+    }
+    return buffer.String()
+}
+
+func (env *Env) Load(file *os.File) {
+    r := &reader{bufio.NewReader(file)}
+    for {
+        expr, _, err := r.Read()
+        if err != nil {
+            break
+        }
+        env.Eval(expr)
+    }
 }
 
 func (env *Env) Begin(cell *Cell) Expr {

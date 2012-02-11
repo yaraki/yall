@@ -102,7 +102,7 @@ func (r *reader) nextToken() (token string, size int, err os.Error) {
 func (r *reader) readTokens(asList bool) (Expr, int, os.Error) {
     token, size, err := r.nextToken()
     if nil != err {
-        panic(NewSyntaxError("Unexpected end of input"))
+        return False, 0, err
     }
     var expr Expr
     if "(" == token {
@@ -152,6 +152,10 @@ func (r *reader) readTokens(asList bool) (Expr, int, os.Error) {
 
 func (r *reader) read(input io.Reader) (Expr, int, os.Error) {
     r.setInput(input)
+    return r.readTokens(false)
+}
+
+func (r *reader) Read() (Expr, int, os.Error) {
     return r.readTokens(false)
 }
 
