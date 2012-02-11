@@ -69,6 +69,7 @@ func Load(env *Env, args *Cell) Expr {
                 panic(NewRuntimeError("Cannot load: " + filename.String()))
             }
             env.Load(file)
+            file.Close()
         } else {
             panic(NewRuntimeError("Cannot load: " + expr.String()))
         }
