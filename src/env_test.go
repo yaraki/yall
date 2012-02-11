@@ -70,5 +70,3 @@ func TestEval4(t *testing.T) {
         t.Errorf("Something is wrong with closure.")
     }
 }
-
-

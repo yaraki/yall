@@ -256,4 +256,3 @@ var TYPE_SPECIAL_FORM *Type = NewType("special-form")
 var TYPE_BOOL *Type = NewType("bool")
 var TYPE_TYPE *Type = NewType("type")
 var TYPE_UNKNOWN *Type = NewType("unknown")
-

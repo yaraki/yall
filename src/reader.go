@@ -166,4 +166,3 @@ func Read(input io.Reader) (expr Expr, size int, err os.Error) {
 func ReadFromString(s string) (expr Expr, size int, err os.Error) {
     return Read(strings.NewReader(s))
 }
-

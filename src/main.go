@@ -25,7 +25,7 @@ func repl() {
             return
         }
         func() {
-            defer func(){
+            defer func() {
                 if r := recover(); r != nil {
                     fmt.Println(r)
                 }

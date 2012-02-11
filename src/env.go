@@ -218,5 +218,3 @@ func typeOf(expr Expr) *Type {
     }
     return TYPE_UNKNOWN
 }
-
-

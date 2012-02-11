@@ -33,5 +33,3 @@ func NewRuntimeError(message string) *RuntimeError {
 func (err *RuntimeError) String() string {
     return "*** ERROR: " + err.message
 }
-
-
