@@ -68,8 +68,8 @@ func Load(env *Env, args *Cell) Expr {
             if nil != err {
                 panic(NewRuntimeError("Cannot load: " + filename.String()))
             }
+            defer file.Close()
             env.Load(file)
-            file.Close()
         } else {
             panic(NewRuntimeError("Cannot load: " + expr.String()))
         }

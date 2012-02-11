@@ -48,8 +48,8 @@ func loadFiles() {
                 flag.Arg(i), err)
             os.Exit(1)
         }
+        defer file.Close()
         env.Load(file)
-        file.Close()
     }
 }
 
