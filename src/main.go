@@ -6,6 +6,7 @@ package main
 
 import (
     "bufio"
+    "flag"
     "fmt"
     "os"
     "yall"
@@ -38,6 +39,25 @@ func repl() {
     fmt.Println()
 }
 
+func loadFiles() {
+    env := yall.NewEnv()
+    for i := 0; i < flag.NArg(); i++ {
+        file, err := os.Open(flag.Arg(i))
+        if file == nil {
+            fmt.Fprintf(os.Stderr, "Can't open %s: error %s\n",
+                flag.Arg(i), err)
+            os.Exit(1)
+        }
+        env.Load(file)
+        file.Close()
+    }
+}
+
 func main() {
-    repl()
+    flag.Parse()
+    if flag.NArg() == 0 {
+        repl()
+    } else {
+        loadFiles()
+    }
 }
