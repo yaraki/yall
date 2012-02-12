@@ -34,10 +34,20 @@ func bindLambdaList(env *Env, lambdaList *Cell, args *Cell) {
     }
 }
 
-func Lambda(env *Env, args *Cell) Expr {
+func lambda(env *Env, args *Cell) Expr {
     lambdaList := args.Car().(*Cell)
     body := args.Cdr()
     return NewFunction("#lambda", func(args *Cell) Expr {
+        derived := env.Derive()
+        bindLambdaList(derived, lambdaList, args)
+        return derived.Begin(body)
+    })
+}
+
+func macro(env *Env, args *Cell) Expr {
+    lambdaList := args.Car().(*Cell)
+    body := args.Cdr()
+    return NewMacro("#macro", func(args *Cell) Expr {
         derived := env.Derive()
         bindLambdaList(derived, lambdaList, args)
         return derived.Begin(body)
@@ -58,18 +68,10 @@ var specialForms = map[string]func(*Env, *Cell) Expr{
         panic(NewRuntimeError("Can't define"))
     },
 
-    "lambda": Lambda,
-    "fn":     Lambda,
+    "lambda": lambda,
+    "fn":     lambda,
 
-    "macro": func(env *Env, args *Cell) Expr {
-        lambdaList := args.Car().(*Cell)
-        body := args.Cdr()
-        return NewMacro("#macro", func(args *Cell) Expr {
-            derived := env.Derive()
-            bindLambdaList(derived, lambdaList, args)
-            return derived.Begin(body)
-        })
-    },
+    "macro": macro,
 
     "defn": func(env *Env, args *Cell) Expr {
         cell, ok := args.Car().(*Cell)
@@ -79,14 +81,24 @@ var specialForms = map[string]func(*Env, *Cell) Expr{
         symbol := cell.Car().(*Symbol)
         lambdaArgs := cell.Cdr()
         lambdaBody := args.Cdr()
-        lambda := Lambda(env, NewCell(lambdaArgs, lambdaBody)).(*Function)
-        lambda.SetName(symbol.Name())
-        env.Intern(symbol, lambda)
+        f := lambda(env, NewCell(lambdaArgs, lambdaBody)).(*Function)
+        f.SetName(symbol.Name())
+        env.Intern(symbol, f)
         return symbol
     },
 
     "defmacro": func(env *Env, args *Cell) Expr {
-        return True
+        cell, ok := args.car.(*Cell)
+        if !ok {
+            panic(NewRuntimeError("Can't define macro."))
+        }
+        symbol := cell.car.(*Symbol)
+        lambdaList := cell.Cdr()
+        body := args.Cdr()
+        m := macro(env, NewCell(lambdaList, body)).(*Macro)
+        m.SetName(symbol.name)
+        env.Intern(symbol, m)
+        return symbol
     },
 
     "if": func(env *Env, args *Cell) Expr {
