@@ -12,7 +12,7 @@ func bindLambdaList(env *Env, lambdaList *Cell, args *Cell) {
     for c := lambdaList; c != Empty; c = c.cdr {
         e := c.car
         if symbol, ok := e.(*Symbol); ok {
-            if symbol.name == "." {  // &rest (&body)
+            if symbol.name == "." { // &rest (&body)
                 env.Intern(c.Cadr().(*Symbol), args)
                 break
             } else {
