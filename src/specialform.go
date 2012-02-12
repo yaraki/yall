@@ -8,16 +8,30 @@ import (
     "os"
 )
 
-// TODO: Optional argument ... (lambda (a (start 0)))
-// TODO: Body (rest) argument ...  (lambda (a . body))
 func bindLambdaList(env *Env, lambdaList *Cell, args *Cell) {
-    lambdaList.Each(func(e Expr) {
+    for c := lambdaList; c != Empty; c = c.cdr {
+        e := c.car
         if symbol, ok := e.(*Symbol); ok {
-            expr := args.Car()
-            env.Intern(symbol, expr)
-            args = args.Cdr()
+            if symbol.name == "." {  // &rest (&body)
+                env.Intern(c.Cadr().(*Symbol), args)
+                break
+            } else {
+                expr := args.Car()
+                env.Intern(symbol, expr)
+                args = args.Cdr()
+            }
+        } else if cell, ok := e.(*Cell); ok {
+            symbol := cell.car.(*Symbol)
+            if Empty == args {
+                defaultValue := cell.Cadr()
+                env.Intern(symbol, defaultValue)
+            } else {
+                expr := args.Car()
+                env.Intern(symbol, expr)
+                args = args.Cdr()
+            }
         }
-    })
+    }
 }
 
 func Lambda(env *Env, args *Cell) Expr {

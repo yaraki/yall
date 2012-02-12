@@ -11,9 +11,8 @@ YALL - Yet Another Lightweight Lisp
 
 <<< ToDo >>>
 
-  - lambda-list (&rest, &body, &key)
-  - Keyword
+  - Type system
   - Better error handling
   - Better REPL
-  - Type system
+  - Keyword
 
