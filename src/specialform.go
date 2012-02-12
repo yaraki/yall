@@ -46,9 +46,6 @@ func Lambda(env *Env, args *Cell) Expr {
 
 var specialForms = map[string]func(*Env, *Cell) Expr{
 
-    "lambda": Lambda,
-    "fn":     Lambda,
-
     "def": func(env *Env, args *Cell) Expr {
         if symbol, ok := args.Car().(*Symbol); ok {
             value := env.Eval(args.Cadr())
@@ -57,17 +54,12 @@ var specialForms = map[string]func(*Env, *Cell) Expr{
             }
             env.Intern(symbol, value)
             return symbol
-        } else if cell, ok := args.Car().(*Cell); ok {
-            symbol := cell.Car().(*Symbol)
-            lambdaArgs := cell.Cdr()
-            lambdaBody := args.Cdr()
-            lambda := Lambda(env, NewCell(lambdaArgs, lambdaBody)).(*Function)
-            lambda.SetName(symbol.Name())
-            env.Intern(symbol, lambda)
-            return symbol
         }
         panic(NewRuntimeError("Can't define"))
     },
+
+    "lambda": Lambda,
+    "fn":     Lambda,
 
     "macro": func(env *Env, args *Cell) Expr {
         lambdaList := args.Car().(*Cell)
@@ -77,6 +69,24 @@ var specialForms = map[string]func(*Env, *Cell) Expr{
             bindLambdaList(derived, lambdaList, args)
             return derived.Begin(body)
         })
+    },
+
+    "defn": func(env *Env, args *Cell) Expr {
+        cell, ok := args.Car().(*Cell)
+        if !ok {
+            panic(NewRuntimeError("Can't define function."))
+        }
+        symbol := cell.Car().(*Symbol)
+        lambdaArgs := cell.Cdr()
+        lambdaBody := args.Cdr()
+        lambda := Lambda(env, NewCell(lambdaArgs, lambdaBody)).(*Function)
+        lambda.SetName(symbol.Name())
+        env.Intern(symbol, lambda)
+        return symbol
+    },
+
+    "defmacro": func(env *Env, args *Cell) Expr {
+        return True
     },
 
     "if": func(env *Env, args *Cell) Expr {
