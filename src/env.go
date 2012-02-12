@@ -19,25 +19,14 @@ func NewEnv() *Env {
     env := new(Env)
     env.values = make(map[string]Expr)
     env.parent = nil
-    env.internFunction("+", Plus)
-    env.internFunction("-", Minus)
-    env.internFunction("*", Multiply)
-    env.internSpecialForm("def", Def)
-    env.internSpecialForm("lambda", Lambda)
-    env.internSpecialForm("fn", Lambda)
-    env.internSpecialForm("inc!", Incf)
-    env.internSpecialForm("if", If)
-    env.internSpecialForm("load", Load)
+    env.internVariable("#t", True)
+    env.internVariable("#f", False)
     for name, form := range specialForms {
         env.internSpecialForm(name, form)
     }
-    env.internVariable("#t", True)
-    env.internVariable("#f", False)
-    env.internFunction("car", Car)
-    env.internFunction("cdr", Cdr)
-    env.internFunction("cons", Cons)
-    env.internFunction("type-of", TypeOf)
-    env.internFunction("println", Println)
+    for name, function := range builtinFunctions {
+        env.internFunction(name, function)
+    }
     return env
 }
 
