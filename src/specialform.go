@@ -8,17 +8,24 @@ import (
     "os"
 )
 
+// TODO: Optional argument ... (lambda (a (start 0)))
+// TODO: Body (rest) argument ...  (lambda (a . body))
+func bindLambdaList(env *Env, lambdaList *Cell, args *Cell) {
+    lambdaList.Each(func(e Expr) {
+        if symbol, ok := e.(*Symbol); ok {
+            expr := args.Car()
+            env.Intern(symbol, expr)
+            args = args.Cdr()
+        }
+    })
+}
+
 func Lambda(env *Env, args *Cell) Expr {
-    formalArgs := args.Car().(*Cell)
+    lambdaList := args.Car().(*Cell)
     body := args.Cdr()
     return NewFunction("#lambda", func(args *Cell) Expr {
         derived := env.Derive()
-        formalArgs.Each(func(e Expr) {
-            symbol := e.(*Symbol)
-            expr := args.Car()
-            derived.Intern(symbol, expr)
-            args = args.Cdr()
-        })
+        bindLambdaList(derived, lambdaList, args)
         return derived.Begin(body)
     })
 }
@@ -49,16 +56,11 @@ var specialForms = map[string]func(*Env, *Cell) Expr{
     },
 
     "macro": func(env *Env, args *Cell) Expr {
-        formalArgs := args.Car().(*Cell)
+        lambdaList := args.Car().(*Cell)
         body := args.Cdr()
         return NewMacro("#macro", func(args *Cell) Expr {
             derived := env.Derive()
-            formalArgs.Each(func(e Expr) {
-                symbol := e.(*Symbol)
-                expr := args.Car()
-                derived.Intern(symbol, expr)
-                args = args.Cdr()
-            })
+            bindLambdaList(derived, lambdaList, args)
             return derived.Begin(body)
         })
     },
