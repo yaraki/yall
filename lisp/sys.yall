@@ -1,0 +1,7 @@
+(defn (map proc lst)
+    (if (empty? lst)
+	()
+      (cons (proc (car lst)) (map proc (cdr lst)))))
+
+(map println '("abc" "def"))
+

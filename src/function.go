@@ -88,4 +88,11 @@ var builtinFunctions = map[string]func(*Cell) Expr{
         })
         return True
     },
+
+    "empty?": func(args *Cell) Expr {
+        if Empty == args.car {
+            return True
+        }
+        return False
+    },
 }

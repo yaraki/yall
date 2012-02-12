@@ -15,17 +15,17 @@ func bindLambdaList(env *Env, lambdaList *Cell, args *Cell) {
             if symbol.name == "." { // &rest (&body)
                 env.Intern(c.Cadr().(*Symbol), args)
                 break
-            } else {
+            } else { // normal arg
                 expr := args.Car()
                 env.Intern(symbol, expr)
                 args = args.Cdr()
             }
         } else if cell, ok := e.(*Cell); ok {
             symbol := cell.car.(*Symbol)
-            if Empty == args {
+            if Empty == args { // default arg
                 defaultValue := cell.Cadr()
                 env.Intern(symbol, defaultValue)
-            } else {
+            } else { // default arg with a specified value
                 expr := args.Car()
                 env.Intern(symbol, expr)
                 args = args.Cdr()
