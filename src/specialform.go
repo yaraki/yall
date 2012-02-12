@@ -26,7 +26,7 @@ func Lambda(env *Env, args *Cell) Expr {
 var specialForms = map[string]func(*Env, *Cell) Expr{
 
     "lambda": Lambda,
-    "fn": Lambda,
+    "fn":     Lambda,
 
     "def": func(env *Env, args *Cell) Expr {
         if symbol, ok := args.Car().(*Symbol); ok {
@@ -47,7 +47,7 @@ var specialForms = map[string]func(*Env, *Cell) Expr{
         }
         panic(NewRuntimeError("Can't define"))
     },
-    
+
     "macro": func(env *Env, args *Cell) Expr {
         formalArgs := args.Car().(*Cell)
         body := args.Cdr()
@@ -81,7 +81,7 @@ var specialForms = map[string]func(*Env, *Cell) Expr{
         return integer
     },
 
-    "load": func (env *Env, args *Cell) Expr {
+    "load": func(env *Env, args *Cell) Expr {
         args.Each(func(expr Expr) {
             if filename, ok := expr.(*String); ok {
                 file, err := os.Open(filename.value)
