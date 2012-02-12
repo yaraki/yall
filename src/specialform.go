@@ -43,6 +43,23 @@ func Lambda(env *Env, args *Cell) Expr {
     })
 }
 
+var specialForms = map[string]func(*Env, *Cell) Expr{
+    "macro": func(env *Env, args *Cell) Expr {
+        formalArgs := args.Car().(*Cell)
+        body := args.Cdr()
+        return NewMacro("#macro", func(args *Cell) Expr {
+            derived := env.Derive()
+            formalArgs.Each(func(e Expr) {
+                symbol := e.(*Symbol)
+                expr := args.Car()
+                derived.Intern(symbol, expr)
+                args = args.Cdr()
+            })
+            return derived.Begin(body)
+        })
+    },
+}
+
 func If(env *Env, args *Cell) Expr {
     condition := env.Eval(args.Car())
     if condition != False {

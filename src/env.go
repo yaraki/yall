@@ -28,6 +28,9 @@ func NewEnv() *Env {
     env.internSpecialForm("inc!", Incf)
     env.internSpecialForm("if", If)
     env.internSpecialForm("load", Load)
+    for name, form := range specialForms {
+        env.internSpecialForm(name, form)
+    }
     env.internVariable("#t", True)
     env.internVariable("#f", False)
     env.internFunction("car", Car)
@@ -95,6 +98,8 @@ func (env *Env) EvalCell(cell *Cell) Expr {
         return form.Apply(env, cell.Cdr())
     } else if function, ok := head.(*Function); ok {
         return function.Apply(env.EvalEach(cell.Cdr()))
+    } else if macro, ok := head.(*Macro); ok {
+        return env.Eval(macro.Expand(cell.Cdr()))
     }
     panic(NewRuntimeError("Failed to eval cell"))
 }
@@ -206,6 +211,9 @@ func typeOf(expr Expr) *Type {
     }
     if _, ok := expr.(*Function); ok {
         return TYPE_FUNCTION
+    }
+    if _, ok := expr.(*Macro); ok {
+        return TYPE_MACRO
     }
     if _, ok := expr.(*SpecialForm); ok {
         return TYPE_SPECIAL_FORM

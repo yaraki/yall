@@ -201,6 +201,30 @@ func (function *Function) Apply(args *Cell) Expr {
     return function.f(args)
 }
 
+type Macro struct {
+    name string
+    f    func(*Cell) Expr
+}
+
+func NewMacro(name string, f func(*Cell) Expr) *Macro {
+    macro := new(Macro)
+    macro.name = name
+    macro.f = f
+    return macro
+}
+
+func (macro *Macro) String() string {
+    return "<macro " + macro.name + ">"
+}
+
+func (macro *Macro) SetName(name string) {
+    macro.name = name
+}
+
+func (macro *Macro) Expand(args *Cell) Expr {
+    return macro.f(args)
+}
+
 type SpecialForm struct {
     name string
     f    func(*Env, *Cell) Expr
@@ -252,6 +276,7 @@ var TYPE_SYMBOL *Type = NewType("symbol")
 var TYPE_INTEGER *Type = NewType("integer")
 var TYPE_STRING *Type = NewType("string")
 var TYPE_FUNCTION *Type = NewType("function")
+var TYPE_MACRO *Type = NewType("macro")
 var TYPE_SPECIAL_FORM *Type = NewType("special-form")
 var TYPE_BOOL *Type = NewType("bool")
 var TYPE_TYPE *Type = NewType("type")
