@@ -27,6 +27,12 @@ func NewEnv() *Env {
     for name, function := range builtinFunctions {
         env.internFunction(name, function)
     }
+    f, err := os.Open("lisp/sys.yall")
+    if err != nil {
+        panic(NewRuntimeError("Failed to open sys.yall"))
+    }
+    defer f.Close()
+    env.Load(f)
     return env
 }
 
@@ -90,7 +96,10 @@ func (env *Env) EvalCell(cell *Cell) Expr {
     } else if macro, ok := head.(*Macro); ok {
         return env.Eval(macro.Expand(cell.Cdr()))
     }
-    panic(NewRuntimeError("Failed to eval cell"))
+    for k, v := range env.values {
+        println("# " + k + ": " + v.String())
+    }
+    panic(NewRuntimeError("Failed to eval cell: " + cell.String()))
 }
 
 func (env *Env) EvalQuasiquoted(expr Expr) Expr {

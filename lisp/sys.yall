@@ -3,5 +3,7 @@
 	()
       (cons (proc (car lst)) (map proc (cdr lst)))))
 
-(map println '("abc" "def"))
-
+(defn (reduce acc proc lst)
+    (if (empty? lst)
+	acc
+      (reduce (proc acc (car lst)) proc (cdr lst))))

@@ -95,4 +95,8 @@ var builtinFunctions = map[string]func(*Cell) Expr{
         }
         return False
     },
+
+    "list": func(args *Cell) Expr {
+        return args
+    },
 }
