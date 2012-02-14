@@ -386,5 +386,8 @@
     testReaderRead();
     testEnvEval();
 
+    if ('undefined' != typeof(window)) {
+        window.yall = yall;
+    }
     return yall;
 })();
