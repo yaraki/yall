@@ -123,7 +123,7 @@
         },
 
         print: function() {
-            return '<' + FUNCTION_TYPENAMES[this.type] + ' ' + this.name + '>';
+            return '#<' + FUNCTION_TYPENAMES[this.type] + ' ' + this.name + '>';
         },
 
         applyEval: function(env) {
@@ -255,11 +255,57 @@
             return args;
         }),
 
+        new yall.Function('car', yall.FUNC_PROC, function (args) {
+            return args.car.car;
+        }),
+
+        new yall.Function('cdr', yall.FUNC_PROC, function (args) {
+            return args.car.cdr;
+        }),
+
         new yall.Function('null?', yall.FUNC_PROC, function (args) {
             if (args.car == yall.EMPTY) {
                 return yall.TRUE;
             }
             return yall.FALSE;
+        }),
+
+        new yall.Function('+', yall.FUNC_PROC, function(args) {
+            var result = 0;
+            for (var cell = args; cell != yall.EMPTY; cell = cell.cdr) {
+                result += cell.car.value;
+            }
+            return new yall.Number(result);
+        }),
+
+        new yall.Function('-', yall.FUNC_PROC, function (args) {
+            if (args.cdr == yall.EMPTY) {
+                return new yall.Number(args.car.value * -1);
+            }
+            var result = args.car.value;
+            for (var cell = args.cdr; cell != yall.EMPTY; cell = cell.cdr) {
+                result -= cell.car.value;
+            }
+            return new yall.Number(result);
+        }),
+
+        new yall.Function('*', yall.FUNC_PROC, function (args) {
+            var result = 1;
+            for (var cell = args; cell != yall.EMPTY; cell = cell.cdr) {
+                result *= cell.car.value;
+            }
+            return new yall.Number(result);
+        }),
+
+        new yall.Function('/', yall.FUNC_PROC, function (args) {
+            if (args.cdr == yall.EMPTY) {
+                return new yall.Number(1 / args.car.value);
+            }
+            var result = args.car.value;
+            for (var cell = args.cdr; cell != yall.EMPTY; cell = cell.cdr) {
+                result /= cell.car.value;
+            }
+            return new yall.Number(result);
         })
     ];
 
@@ -358,6 +404,11 @@
             settings: ['(def a 5)'],
             input: '(eval a)',
             expected: '5'
+        },
+        {
+            settings: [],
+            input: '(+ 1 2)',
+            expected: '3'
         }
 /*
         {

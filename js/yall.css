@@ -5,3 +5,6 @@ body {
 #input {
     font-size: 12pt;
 }
+
+li.normal { color: black; }
+li.error { color: red; }
