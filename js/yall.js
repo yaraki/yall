@@ -20,6 +20,15 @@
         Function: function(name, type, func) {
             this.init(name, type, func);
         },
+        Quoted: function(expr) {
+            this.init(expr);
+        },
+        Quasiquoted: function(expr) {
+            this.init(expr);
+        },
+        Unquoted: function(expr) {
+            this.init(expr);
+        },
         TRUE: {
             print: function () { return '#t'; },
             applyEval: function(env) { return this; }
@@ -131,6 +140,49 @@
         }
     };
 
+    yall.Quoted.prototype = {
+        init: function(expr) {
+            this.expr = expr;
+        },
+
+        print: function() {
+            return "'" + this.expr.print();
+        },
+
+        applyEval: function(env) {
+            return this.expr;
+        }
+    };
+
+    yall.Quasiquoted.prototype = {
+        init: function(expr) {
+            this.expr = expr;
+        },
+
+        print: function() {
+            return '`' + this.expr.print();
+        },
+
+        applyEval: function(env) {
+            // TODO: Deal with unquote and splicing-unquote here
+            return this.expr;
+        }
+    };
+
+    yall.Unquoted.prototype = {
+        init: function(expr) {
+            this.expr = expr;
+        },
+
+        print: function() {
+            return "," + this.expr.print();
+        },
+
+        applyEval: function(env) {
+            return this.expr;
+        }
+    };
+
     yall.Reader.prototype = {
         init: function(s) {
             this.input = s.split('');
@@ -196,22 +248,28 @@
         readToken: function(asList) {
             var token = this.nextToken();
             var ret = null;
-            if (token == '(') {
+            if (token == '(') {  // list start
                 ret = this.readToken(true);
-            } else if (token == ')') {
+            } else if (token == ')') {  // list end
                 ret = yall.EMPTY;
                 asList = false;
-            } else if (/^".*"$/.test(token)) {
+            } else if (/^".*"$/.test(token)) {  // string
                 ret = new yall.String(token.slice(1, -1));
+            } else if (token == "'") {  // quoted
+                ret = new yall.Quoted(this.readToken(false));
+            } else if (token == '`') {  // quasiquoted
+                ret = new yall.Quasiquoted(this.readToken(false));
+            } else if (token == ',') {  // unquoted
+                ret = new yall.Unquoted(this.readToken(false));
             } else {
                 var i = parseInt(token), f = parseFloat(token);
-                if (i) {
+                if (i) {  // number
                     if (f) {
                         ret = new yall.Number(f);
                     } else {
                         ret = new yall.Number(i);
                     }
-                } else {
+                } else {  // symbol
                     ret = new yall.Symbol(token);
                 }
             }
@@ -371,7 +429,7 @@
     }
 
     function testReaderRead() {
-        var s = '(a b ("c") 123 12.5)';
+        var s = '(a b ("c") 123 12.5 \'d)';
         var reader = new yall.Reader(s);
         var expr = reader.read();
         if (expr.print() != s) {
