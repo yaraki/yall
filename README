@@ -4,11 +4,6 @@ YALL - Yet Another Lightweight Lisp
 
   A tiny lisp implemented in Go.
 
-<<< Build >>>
-
-  Requires Godag for build (for now)
-  http://code.google.com/p/godag/
-
 <<< ToDo >>>
 
   - Type system
