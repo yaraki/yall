@@ -9,7 +9,7 @@ import (
     "flag"
     "fmt"
     "os"
-    "yall"
+    "github.com/yaraki/yall.go/yall"
 )
 
 func prompt() {

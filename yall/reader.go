@@ -8,7 +8,6 @@ import (
     "bufio"
     "bytes"
     "io"
-    "os"
     "strconv"
     "strings"
 )
@@ -21,7 +20,7 @@ func (r *reader) setInput(input io.Reader) {
     r.input = bufio.NewReader(input)
 }
 
-func (r *reader) nextString() (token string, size int, err os.Error) {
+func (r *reader) nextString() (token string, size int, err error) {
     buffer := bytes.NewBufferString("\"")
     size = 1
     escaped := false
@@ -48,7 +47,7 @@ func (r *reader) nextString() (token string, size int, err os.Error) {
     return "", 0, NewSyntaxError("Unexpected EOS in string")
 }
 
-func (r *reader) nextToken() (token string, size int, err os.Error) {
+func (r *reader) nextToken() (token string, size int, err error) {
     buffer := new(bytes.Buffer)
     size = 0
     for {
@@ -99,7 +98,7 @@ func (r *reader) nextToken() (token string, size int, err os.Error) {
     return "", 0, NewSyntaxError("?")
 }
 
-func (r *reader) readTokens(asList bool) (Expr, int, os.Error) {
+func (r *reader) readTokens(asList bool) (Expr, int, error) {
     token, size, err := r.nextToken()
     if nil != err {
         return False, 0, err
@@ -150,19 +149,19 @@ func (r *reader) readTokens(asList bool) (Expr, int, os.Error) {
     return expr, size, nil
 }
 
-func (r *reader) read(input io.Reader) (Expr, int, os.Error) {
+func (r *reader) read(input io.Reader) (Expr, int, error) {
     r.setInput(input)
     return r.readTokens(false)
 }
 
-func (r *reader) Read() (Expr, int, os.Error) {
+func (r *reader) Read() (Expr, int, error) {
     return r.readTokens(false)
 }
 
-func Read(input io.Reader) (expr Expr, size int, err os.Error) {
+func Read(input io.Reader) (expr Expr, size int, err error) {
     return new(reader).read(input)
 }
 
-func ReadFromString(s string) (expr Expr, size int, err os.Error) {
+func ReadFromString(s string) (expr Expr, size int, err error) {
     return Read(strings.NewReader(s))
 }

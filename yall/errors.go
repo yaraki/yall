@@ -18,6 +18,10 @@ func (serr *SyntaxError) String() string {
     return serr.message
 }
 
+func (serr *SyntaxError) Error() string {
+    return serr.message
+}
+
 func isString(s string) bool {
     return strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"")
 }
@@ -31,5 +35,9 @@ func NewRuntimeError(message string) *RuntimeError {
 }
 
 func (err *RuntimeError) String() string {
+    return "*** ERROR: " + err.message
+}
+
+func (err *RuntimeError) Error () string {
     return "*** ERROR: " + err.message
 }

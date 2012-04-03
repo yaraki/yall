@@ -63,7 +63,7 @@ func (env *Env) Intern(symbol *Symbol, value Expr) {
 }
 
 func (env *Env) Unintern(symbol *Symbol) {
-    env.values[symbol.Name()] = nil, false
+    delete(env.values, symbol.Name())
 }
 
 func (env *Env) EvalSymbol(symbol *Symbol) Expr {
