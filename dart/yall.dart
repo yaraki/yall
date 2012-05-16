@@ -1,8 +1,8 @@
 #import('dart:html');
 
-class ReaderException implements Exception {
+class ParseException implements Exception {
   final String message;
-  ReaderException(this.message);
+  ParseException(this.message);
 }
 
 class RuntimeException implements Exception {
@@ -59,6 +59,21 @@ class YString extends YLiteral {
 
   String str() {
     return "\"${this.value}\"";
+  }
+}
+
+class YQuoted implements YExpr {
+  
+  final YExpr expr;
+  
+  YQuoted(this.expr);
+  
+  String str() {
+    return "'${this.expr.str()}";
+  }
+  
+  YExpr eval(YEnv env) {
+    return this.expr;
   }
 }
 
@@ -124,6 +139,9 @@ class YCell implements YList {
       case expr is YFunction:
         YFunction func = expr;
         return func.body(env.evalEach(this.tail));
+      case expr is YForm:
+        YForm form = expr;
+        return form.body(env, this.tail);
     }
     throw new RuntimeException("Cannot eval: ${this.str()}");
   }
@@ -148,6 +166,20 @@ class YFunction extends YLiteral {
 
   String str() {
     return "#<FUNCTION ${this.name}>";
+  }
+}
+
+typedef YExpr YFormBody(YEnv env, YList args);
+
+class YForm extends YLiteral {
+  
+  final String name;
+  final YFormBody body;
+  
+  YForm(String this.name, YFormBody this.body);
+  
+  String str() {
+    return "#<FORM ${this.name}>";
   }
 }
 
@@ -179,7 +211,7 @@ class YReader {
       }
       sb.add(c);
     }
-    throw new ReaderException("Illegal end of String.");
+    throw new ParseException("Illegal end of String.");
   }
 
   String nextToken() {
@@ -223,7 +255,6 @@ class YReader {
 
   YExpr readExpr(bool asList) {
     String token = nextToken();
-    print("token: ${token}");
     YExpr retval;
     switch (token) {
       case '(': // list start
@@ -232,6 +263,9 @@ class YReader {
       case ')': // list end
         retval = YEmpty.EMPTY;
         asList = false;
+        break;
+      case '\'': // quote
+        retval = new YQuoted(readExpr(false));
         break;
       default:
         if (token[0] == '"' && token[token.length - 1] == '"') { // YString
@@ -264,9 +298,12 @@ class YReader {
 class YEnv {
 
   Map table;
+  
+  YEnv parent;
 
-  YEnv() {
+  YEnv(YEnv parent) {
     this.table = new Map();
+    this.parent = parent;
     bindFunction('+', (YList args) {
       YCell cell = args;
       num result = 0;
@@ -315,21 +352,88 @@ class YEnv {
       });
       return new YNumber(result);
     });
+    bindFunction('car', (YList args) {
+      YCell cell = args;
+      YCell arg1 = cell.head;
+      return arg1.head;
+    });
+    bindFunction('cdr', (YList args) {
+      YCell cell = args;
+      YCell arg1 = cell.head;
+      return arg1.tail;
+    });
+    bindFunction('list', (YList args) {
+      return args;
+    });
+    bindForm('if', (YEnv env, YList args) {
+      YCell cell = args;
+      YExpr condition = cell.head;
+      YCell tail = cell.tail;
+      YExpr trueBody = tail.head;
+      YList falseBody = tail.tail;
+      if (condition.eval(env) == YBoolean.FALSE) {
+        return begin(falseBody);
+      }
+      return trueBody.eval(env);
+    });
+    bindForm('def', (YEnv env, YList args) {
+      YCell cell = args;
+      YSymbol symbol = cell.head;
+      YCell tail = cell.tail;
+      YExpr expr = tail.head.eval(env);
+      env.bind(symbol, expr);
+      return symbol;
+    });
+    bindForm('lambda', (YEnv env, YList args) {
+      YCell cell = args;
+      YList lambdaList = cell.head;
+      YList lambdaBody = cell.tail;
+      return new YFunction('#lambda', (YList args) {
+        YEnv derived = env.derive();
+        derived.bindLambdaList(lambdaList, args);
+        return derived.begin(lambdaBody);
+      });
+    });
+    bind(new YSymbol('#t'), YBoolean.TRUE);
+    bind(new YSymbol('#f'), YBoolean.FALSE);
   }
   
   void bindFunction(String name, YFunctionBody body) {
     bind(new YSymbol(name), new YFunction(name, body));
   }
+  
+  void bindForm(String name, YFormBody body) {
+    bind(new YSymbol(name), new YForm(name, body));
+  }
+  
+  void bindLambdaList(YList lambdaList, YList args) {
+    while (!(lambdaList is YEmpty)) {
+      YCell lambdaCell = lambdaList;
+      YCell argsCell = args;
+      YSymbol symbol = lambdaCell.head;
+      YExpr expr = argsCell.head;
+      bind(symbol, expr);
+      lambdaList = lambdaCell.tail;
+      args = argsCell.tail;
+    }
+  }
 
   void bind(YSymbol symbol, YExpr expr) {
     table[symbol.value] = expr;
   }
+  
+  YEnv derive() {
+    return new YEnv(this);
+  }
 
   YExpr resolve(YSymbol symbol) {
-    if (!table.containsKey(symbol.value)) {
+    if (table.containsKey(symbol.value)) {
+      return table[symbol.value];
+    }
+    if (null == this.parent) {
       throw new RuntimeException("Unbound symbol: ${symbol.value}");
     }
-    return table[symbol.value];
+    return this.parent.resolve(symbol);
   }
   
   YList evalEach(YList list) {
@@ -339,6 +443,16 @@ class YEnv {
     YCell cell = list;
     return new YCell(eval(cell.head), evalEach(cell.tail));
   }
+  
+  YExpr begin(YList list) {
+    YExpr result = YEmpty.EMPTY;
+    while (!(list is YEmpty)) {
+      YCell cell = list;
+      result = cell.head.eval(this);
+      list = cell.tail;
+    }
+    return result;
+  }
 
   YExpr eval(YExpr expr) {
     return expr.eval(this);
@@ -347,7 +461,7 @@ class YEnv {
 
 void main() {
   document.query('#status').innerHTML = 'Ready.';
-  YEnv env = new YEnv();
+  YEnv env = new YEnv(null);
   document.query('#run').on.click.add((event) {
     InputElement input = document.query('#input');
     YReader reader = new YReader(input.value);
@@ -359,7 +473,7 @@ void main() {
       YExpr expr = reader.read();
       readResult.innerHTML = expr.str();
       evalResult.innerHTML = env.eval(expr).str();
-    } catch (ReaderException e) {
+    } catch (ParseException e) {
       readResult.innerHTML = e.message;
       readResult.classes.add("Error");
     } catch (RuntimeException e) {

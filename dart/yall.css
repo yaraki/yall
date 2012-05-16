@@ -1,3 +1,7 @@
 .Error {
 	color: red;
 }
+textarea {
+	font-family: monospace;
+	font-size: 12pt;
+}
