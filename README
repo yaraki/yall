@@ -11,3 +11,10 @@ YALL - Yet Another Lightweight Lisp
   - Better REPL
   - Keyword
 
+<<< How to use >>>
+
+$ go run runyall/main.go
+
+or
+
+$ rlwrap go run runyall/main.go
