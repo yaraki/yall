@@ -71,6 +71,28 @@ var builtinFunctions = map[string]func(*Cell) Expr{
         return NewInteger(result)
     },
 
+    "/": func(args *Cell) Expr {
+        if Empty == args {
+            panic(NewRuntimeError("Too few arguments to '/', at least 1 required"))
+        }
+        i, iok := args.Car().(*Integer)
+        if !iok {
+            panic(NewRuntimeError("'/' requires integers"))
+        }
+        result := i.Value()
+        if Empty == args.Cdr() {
+            return NewInteger(1 / result)
+        }
+        for cell := args.Cdr(); cell != Empty; cell = cell.Cdr() {
+            i, iok := cell.Car().(*Integer)
+            if !iok {
+                panic(NewRuntimeError("'/' requires integers"))
+            }
+            result /= i.Value()
+        }
+        return NewInteger(result)
+    },
+
     "type-of": func(args *Cell) Expr {
         if args.Cdr() != Empty {
             panic(NewRuntimeError("Too many arguments to type-of"))

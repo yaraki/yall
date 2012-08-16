@@ -1,4 +1,4 @@
 *.6
 *.bak
 .DS_Store
-yall
+.*.swp
