@@ -27,7 +27,7 @@ func NewEnv() *Env {
     for name, function := range builtinFunctions {
         env.internFunction(name, function)
     }
-    f, err := os.Open("lisp/sys.yall")
+    f, err := os.Open(os.Getenv("GOPATH") + "/src/github.com/yaraki/yall/lisp/sys.yall")
     if err != nil {
         panic(NewRuntimeError("Failed to open sys.yall"))
     }
