@@ -7,37 +7,37 @@ package core
 import "strings"
 
 type SyntaxError struct {
-    message string
+	message string
 }
 
 func NewSyntaxError(message string) *SyntaxError {
-    return &SyntaxError{message}
+	return &SyntaxError{message}
 }
 
 func (serr *SyntaxError) String() string {
-    return serr.message
+	return serr.message
 }
 
 func (serr *SyntaxError) Error() string {
-    return serr.message
+	return serr.message
 }
 
 func isString(s string) bool {
-    return strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"")
+	return strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"")
 }
 
 type RuntimeError struct {
-    message string
+	message string
 }
 
 func NewRuntimeError(message string) *RuntimeError {
-    return &RuntimeError{message}
+	return &RuntimeError{message}
 }
 
 func (err *RuntimeError) String() string {
-    return "*** ERROR: " + err.message
+	return "*** ERROR: " + err.message
 }
 
-func (err *RuntimeError) Error () string {
-    return "*** ERROR: " + err.message
+func (err *RuntimeError) Error() string {
+	return "*** ERROR: " + err.message
 }
