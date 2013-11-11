@@ -1,20 +1,22 @@
 YALL - Yet Another Lightweight Lisp
 
-<<< What is this? >>>
+What is this?
+-------------
 
   A tiny lisp implemented in Go.
 
-<<< ToDo >>>
+ToDo
+----
 
   - Type system
   - Better error handling
   - Better REPL
   - Keyword
 
-<<< How to use >>>
+How to use
+----------
 
-$ go run runyall/main.go
-
-or
-
-$ rlwrap go run runyall/main.go
+```
+$ go get github.com/yaraki/yall
+$ $GOPATH/bin/yall
+```
