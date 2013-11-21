@@ -1,9 +1,9 @@
 (defn (map proc lst)
-    (if (empty? lst)
-	()
-      (cons (proc (car lst)) (map proc (cdr lst)))))
+  (if (empty? lst)
+      ()
+    (cons (proc (car lst)) (map proc (cdr lst)))))
 
 (defn (reduce acc proc lst)
-    (if (empty? lst)
-	acc
-      (reduce (proc acc (car lst)) proc (cdr lst))))
+  (if (empty? lst)
+      acc
+    (reduce (proc acc (car lst)) proc (cdr lst))))
