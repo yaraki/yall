@@ -25,6 +25,7 @@ var nextTokenTestCases = []nextTokenTestCase{
 	nextTokenTestCase{"(\"abc def\")", []string{"(", "\"abc def\"", ")"}},
 	nextTokenTestCase{"(abc def 'ghi)", []string{"(", "abc", "def", "'", "ghi", ")"}},
 	nextTokenTestCase{"`(a ,b ,@(c))", []string{"`", "(", "a", ",", "b", ",@", "(", "c", ")", ")"}},
+	nextTokenTestCase{"[a b]", []string{"[", "a", "b", "]"}},
 }
 
 func TestNextToken(t *testing.T) {
