@@ -17,6 +17,6 @@ How to use
 ----------
 
 ```
-$ go get github.com/yaraki/yall
+$ go install github.com/yaraki/yall/cmd/yall
 $ $GOPATH/bin/yall
 ```

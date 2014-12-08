@@ -8,7 +8,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"github.com/yaraki/yall/core"
+	"github.com/yaraki/yall"
 	"os"
 )
 
@@ -17,7 +17,7 @@ func prompt() {
 }
 
 func repl() {
-	env := core.NewEnv()
+	env := yall.NewEnv()
 	for {
 		prompt()
 		reader := bufio.NewReader(os.Stdin)
@@ -40,7 +40,7 @@ func repl() {
 }
 
 func loadFiles() {
-	env := core.NewEnv()
+	env := yall.NewEnv()
 	for i := 0; i < flag.NArg(); i++ {
 		file, err := os.Open(flag.Arg(i))
 		if file == nil {
