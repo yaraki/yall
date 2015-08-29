@@ -121,4 +121,25 @@ var builtinFunctions = map[string]func(*Cell) Expr{
 	"list": func(args *Cell) Expr {
 		return args
 	},
+
+	"=": func(args *Cell) Expr {
+		if Empty == args {
+			panic(NewRuntimeError("Too few arguments to '=', at least 1 required"))
+		}
+		i, iok := args.Car().(*Integer)
+		if !iok {
+			panic(NewRuntimeError("'=' requires integers"))
+		}
+		value := i.Value()
+		for cell := args.Cdr(); cell != Empty; cell = cell.Cdr() {
+			i, iok := cell.Car().(*Integer)
+			if !iok {
+				panic(NewRuntimeError("'=' requires integers"))
+			}
+			if (value != i.Value()) {
+				return False
+			}
+		}
+		return True
+	},
 }
