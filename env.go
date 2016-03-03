@@ -6,7 +6,6 @@ package yall
 
 import (
 	"bufio"
-	"bytes"
 	"os"
 )
 
@@ -144,21 +143,6 @@ func (env *Env) EvalString(s string) Expr {
 		return env.Eval(expr)
 	}
 	return nil
-}
-
-// unused
-func slurp(file *os.File) string {
-	buffer := bytes.NewBufferString("")
-	var buf [1024]byte
-	for {
-		switch n, err := file.Read(buf[:]); true {
-		case n < 0:
-			panic(err)
-		case 0 < n:
-			buffer.Write(buf[0:n])
-		}
-	}
-	return buffer.String()
 }
 
 func (env *Env) Load(file *os.File) {
